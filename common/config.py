@@ -55,7 +55,8 @@ class AppConfig:
         ENVIRONMENT VARIABLES LOADED:
         - OPENAI_API_KEY: Required for LLM and embedding operations
         - MCP_SERVER_URLS: Optional, comma-separated list of MCP server URLs
-        - OPENAI_MODEL: Optional, defaults to "gpt-4.1"
+        - OPENAI_MODEL: Optional, defaults to "gpt-5-mini"
+        - OPENAI_REASONING_EFFORT: Optional, defaults to "medium"
         - EMBEDDING_MODEL: Optional, defaults to "text-embedding-3-small"
         - VECTORDB_PATH: Optional, defaults to "./chroma_db"
         - RECURSION_LIMIT: Optional, defaults to 25
@@ -73,8 +74,9 @@ class AppConfig:
         
         # MODEL CONFIGURATION
         # AI model settings with sensible defaults for cost/performance balance
-        self.default_model = os.getenv("OPENAI_MODEL", "gpt-4.1")
+        self.default_model = os.getenv("OPENAI_MODEL", "gpt-5-mini")
         self.embedding_model = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
+        self.reasoning_effort = os.getenv("OPENAI_REASONING_EFFORT", "medium")
         
         # DATABASE CONFIGURATION
         # Vector database path with default that works for local development
@@ -171,6 +173,7 @@ class AppConfig:
         return {
             "model": self.default_model,
             "temperature": self.temperature,
+            "reasoning_effort": self.reasoning_effort,
             "recursion_limit": self.recursion_limit,
             "include_mcp": bool(self.mcp_server_urls.strip())  # MCP if servers configured
         }

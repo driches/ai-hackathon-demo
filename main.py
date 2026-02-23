@@ -63,10 +63,11 @@ def main():
     # Create an AI agent with the appropriate tools based on configuration
     # - Always includes NASA document search capability
     # - Conditionally includes MCP filesystem tools if servers are available
-    # - Uses environment-specified model (default: gpt-4.1)
+    # - Uses environment-specified model (default: gpt-5-mini)
     agent = create_nasa_agent(
         include_mcp=agent_config["include_mcp"],  # MCP tools if servers configured
-        model=agent_config["model"]               # AI model from environment
+        model=agent_config["model"],              # AI model from environment
+        reasoning_effort=agent_config["reasoning_effort"]  # Reasoning depth hint
     )
     
     print("✅ Agent ready for questions!")

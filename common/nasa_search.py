@@ -52,7 +52,7 @@ class NASADocumentSearch:
     faster application startup times.
     """
     
-    def __init__(self, db_path: str = "./chroma_db", model: str = "gpt-4.1"):
+    def __init__(self, db_path: str = "./chroma_db", model: str = "gpt-5-mini", reasoning_effort: str = "medium"):
         """
         Initialize NASA search with configurable paths and models.
         
@@ -67,6 +67,7 @@ class NASADocumentSearch:
         """
         self.db_path = db_path
         self.model_name = model
+        self.reasoning_effort = reasoning_effort
         # Lazy loading: These will be initialized when first accessed
         self._vectordb = None
         self._llm = None
@@ -106,13 +107,13 @@ class NASADocumentSearch:
             ChatOpenAI instance configured for response generation
             
         MODEL SELECTION:
-        Uses gpt-4.1 by default for optimal cost/performance:
+Uses gpt-5-mini by default for strong quality/latency balance:
         - Sufficient capability for executive summaries
-        - Lower cost than GPT-4 for high-volume usage  
+        - Lower cost than frontier models for high-volume usage
         - Fast response times for interactive applications
         """
         if self._llm is None:
-            self._llm = ChatOpenAI(model=self.model_name)
+            self._llm = ChatOpenAI(model=self.model_name, reasoning_effort=self.reasoning_effort)
         return self._llm
     
     def search_documents(self, query: str, k: int = 4) -> str:
