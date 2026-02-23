@@ -56,18 +56,18 @@ class AgentFactory:
     - Template Method: Consistent agent creation flow
     """
     
-    def __init__(self, model: str = "gpt-4.1", temperature: float = 0.0):
+    def __init__(self, model: str = "gpt-5-mini", temperature: float = 0.0, reasoning_effort: str = "medium"):
         """
         Initialize agent factory with model configuration.
         
         Args:
-            model: OpenAI model name (e.g., "gpt-4o-mini", "gpt-4.1")
+            model: OpenAI model name (e.g., "gpt-5-mini")
             temperature: Response randomness (0=deterministic, 1=creative)
             
         MODEL SELECTION STRATEGY:
-        - gpt-4.1: Default choice for cost/performance balance
-        - gpt-4: For complex reasoning tasks requiring higher capability
-        - Temperature 0.2: Some creativity but not too much
+        - gpt-5-mini: Default choice for speed/cost/performance balance
+        - gpt-5: For complex reasoning tasks requiring higher capability
+        - Reasoning effort: medium for balanced depth and latency
         
         FACTORY CONFIGURATION:
         The factory stores model parameters but defers expensive operations
@@ -75,6 +75,7 @@ class AgentFactory:
         """
         self.model = model
         self.temperature = temperature
+        self.reasoning_effort = reasoning_effort
     
     def create_agent(self, include_mcp: bool = True):
         """
@@ -120,7 +121,11 @@ class AgentFactory:
         
         # MODEL CONFIGURATION PHASE
         # Configure LLM with specified parameters
-        llm = ChatOpenAI(model=self.model, temperature=self.temperature)
+        llm = ChatOpenAI(
+            model=self.model,
+            temperature=self.temperature,
+            reasoning_effort=self.reasoning_effort
+        )
         
         # Bind tools to LLM so it knows what capabilities are available
         # This enables the model to generate proper tool calls
@@ -196,13 +201,18 @@ Use the nasa_document_search tool to answer questions about NASA missions, engin
 Always provide executive-level, detailed responses based on the NASA documentation."""
 
 
-def create_nasa_agent(include_mcp: bool = True, model: str = "gpt-4.1"):
+def create_nasa_agent(
+    include_mcp: bool = True,
+    model: str = "gpt-5-mini",
+    reasoning_effort: str = "medium"
+):
     """
     Convenience function for creating NASA Q&A agents.
     
     Args:
         include_mcp: Whether to include MCP filesystem tools
         model: OpenAI model name for the agent
+        reasoning_effort: Reasoning depth hint for compatible models
         
     Returns:
         Configured agent ready for NASA document Q&A
@@ -223,5 +233,5 @@ def create_nasa_agent(include_mcp: bool = True, model: str = "gpt-4.1"):
     application scenarios, providing a clean abstraction over the
     more complex AgentFactory class.
     """
-    factory = AgentFactory(model=model)
+    factory = AgentFactory(model=model, reasoning_effort=reasoning_effort)
     return factory.create_agent(include_mcp=include_mcp) 
